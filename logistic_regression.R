@@ -23,7 +23,7 @@
 ##         health objectives.
 
 ##   Load the National Health Interview Survey data:
-
+setwd("C://Users/ramsu/Documents/Ram/LogRegression")
 NH11 <- readRDS("dataSets/NatHealth2011.rds")
 labs <- attributes(NH11)$labels
 
@@ -106,3 +106,17 @@ plot(allEffects(hyp.out))
 ##   Note that the data is not perfectly clean and ready to be modeled. You
 ##   will need to clean up at least some of the variables before fitting
 ##   the model.
+nh11.wrk.age.mar <- subset(NH11, select = c("everwrk", "age_p", "r_maritl"))
+summary(nh11.wrk.age.mar)
+NH11 <- transform(NH11,
+                  everwrk = factor(everwrk,
+                                   levels = c("1 Yes", "2 No")),
+                  r_maritl = droplevels(r_maritl))
+
+mod.wk.age.mar <- glm(everwrk ~ age_p + r_maritl, data = NH11,
+                      family = "binomial")
+
+summary(mod.wk.age.mar)
+
+library(effects)
+data.frame(Effect("r_maritl", mod.wk.age.mar))
